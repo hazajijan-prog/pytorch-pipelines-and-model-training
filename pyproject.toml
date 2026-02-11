@@ -1,0 +1,10 @@
+[project]
+name = "pytorch-pipelines-and-model-training"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "torch==2.2.2",
+    "torchvision==0.17.2",
+]
