@@ -9,7 +9,7 @@ import torch.optim as optim
 # Funktion som tränar modellen
 # train_loader = data som kommer i batchar
 # epochs = hur många gånger modellen ska gå igenom hela datan
-def train_model(train_loader, epochs=1, lr=0.001):
+def train_model(model, train_loader, device, epochs=1, lr=0.001):
     
     # Sätt modellen i train-läge
     model.train()
