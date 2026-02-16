@@ -12,8 +12,19 @@ from src.model import SimpleClassifier
 # Funktion som tränar modellen
 # train_loader = data som kommer i batchar
 # epochs = hur många gånger modellen ska gå igenom hela datan
-def train_model(train_loader, epochs=5):
-    model = SimpleClassifier() # Skapar en instans av modellen (ett neuralt nätverk)
+def train_model(train_loader, epochs=1):
+    
+    # Välj device (GPU om finns)
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    
+    # Skapar en instans av modellen (ett neuralt nätverk)
+    model = SimpleClassifier()
+    
+    # Skicka modellen till device
+    model.to(device)
+    
+    # Sätt modellen i train-läge
+    model.train()
     
     # Definierar loss-funktion
     # CrossEntropyLoss används ofta för klassificering
@@ -26,21 +37,27 @@ def train_model(train_loader, epochs=5):
     
     # Loopar över antal epochs (hela datasetet flera gånger)
     for epoch in range(epochs):
+        epoch_loss = 0
         
-        # Loopar över batchar av bilder och labels
         for images, labels in train_loader:
+            images = images.to(device)
+            labels = labels.to(device)
+            
+            # Forward pass
             outputs = model(images)
-            loss = criterion(outputs,labels)
+            loss = criterion(outputs, labels)
+            
+            # Backpropagation
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
             
-        print(f"Epoch {epoch+1}/{epochs} klar")
-
-
-# testing 
-from src.dataset import get_dataloaders
-
-if __name__ == "__main__":
-    train_loader, _ = get_dataloaders()
-    train_model(train_loader, epochs=1)
+            # Lägg till batchens loss
+            epoch_loss += loss.item()
+        
+        # Räkna genomsnittlig loss för epoken
+        avg_loss = epoch_loss / len(train_loader)
+        
+        print(f"Epoch {epoch+1}/{epochs} - Loss: {avg_loss:.4f}")
+        
+    return model 
