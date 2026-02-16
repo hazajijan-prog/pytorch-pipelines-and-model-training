@@ -1,5 +1,6 @@
 import torch
 from src.dataset import get_dataloaders
+from src.model import SimpleClassifier
 from src.train import train_model
 from src.evaluate import evaluate_model
 
@@ -9,12 +10,18 @@ def main():
 
     train_loader, test_loader = get_dataloaders(batch_size=64)
     
-    model = train_model(train_loader, epochs=5)
+    # Skapa modellen
+    model = SimpleClassifier()
+    model.to(device)
     
-    accuracy = evaluate_model(model, test_loader, device)
-    
-    print(f"Test Accuracy: {accuracy:.4f}")
+    # Träna modellen
+    model = train_model(model, train_loader, device, epochs=5, lr=0.001)
 
+    # Utvärdera modellen
+    accuracy = evaluate_model(model, test_loader, device)
+
+    print(f"Test Accuracy: {accuracy:.4f}")
+    
     
 
 if __name__ == "__main__":
