@@ -5,7 +5,7 @@ import torchvision
 def get_dataloaders(batch_size=64):
 
     train_dataset = torchvision.datasets.CIFAR10(
-        root="data",
+        root="../data",
         train=True,
         transform=transforms.ToTensor(),
         download=True
