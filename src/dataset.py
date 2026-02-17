@@ -1,9 +1,12 @@
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
 import torchvision
-from src.settings import DATA_DIR
+import os
 
 def get_dataloaders(batch_size=64):
+    ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+    DATA_DIR = f"{ROOT_DIR}/../data"
+
     train_dataset = torchvision.datasets.CIFAR10(
         root=DATA_DIR,
         train=True,
