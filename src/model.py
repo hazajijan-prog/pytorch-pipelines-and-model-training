@@ -1,37 +1,38 @@
-import torch.nn as nn  # Importerar PyTorchs modul för neurala nätverk
+"""
+Model-modul.
 
-# Vi skapar en egen modellklass som ärver från nn.Module
-# Alla träningsbara modeller i PyTorch bygger på nn.Module
+Innehåller en fullt kopplad modell för klassificering av CIFAR-10.
+"""
+
+import torch.nn as nn
+
+
 class SimpleClassifier(nn.Module):
+    """
+    Enkel feedforward-modell för bildklassificering.
+
+    Arkitektur:
+        - Input: 3x32x32 bilder (flattenas till 3072 värden)
+        - Doldt lager: 128 neuroner + ReLU
+        - Output: 10 klasser
+    """
 
     def __init__(self):
-        # Anropar konstruktor i nn.Module (viktigt för att PyTorch ska funka korrekt)
         super().__init__()
 
-        # Här definierar vi själva nätverkets arkitektur
-        # nn.Sequential betyder: lager körs i ordning
+        # Definierar nätverkets lager i ordning
         self.model = nn.Sequential(
-            # Första lagret:
-            # Tar en input-vektor med 3072 värden (3*32*32 pixlar)
-            # och mappar till 128 neuroner
-            nn.Linear(3072, 128),
-
-            # ReLU = aktiveringsfunktion
-            # Lägger in icke-linearitet så modellen kan lära komplexa mönster
-            nn.ReLU(),
-
-            # Output-lagret:
-            # Mappar från 128 neuroner till 10 klasser (CIFAR-10 har 10 kategorier)
-            nn.Linear(128, 10)
+            nn.Linear(3072, 128),  # 3*32*32 -> 128 neuroner
+            nn.ReLU(),  # Aktiveringsfunktion
+            nn.Linear(128, 10),  # 10 utgångar (en per klass)
         )
 
-    # forward beskriver hur data flödar genom nätverket
-    # Den körs automatiskt när vi gör: model(x)
     def forward(self, x):
+        """
+        Definierar hur data flödar genom nätverket.
+        """
 
-        # Bilder kommer in som: [batch_size, 3, 32, 32]
-        # Vi plattar ut varje bild till en vektor: [batch_size, 3072]
-        x = x.view(x.size(0), -1)  # flatten image
+        # Plattar ut bilden till en vektor innan den skickas in i nätverket
+        x = x.view(x.size(0), -1)
 
-        # Skickar datan genom vårt nätverk
         return self.model(x)

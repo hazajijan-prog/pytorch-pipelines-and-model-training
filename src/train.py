@@ -1,51 +1,55 @@
-# Torch - tensor-operationer 
-# nn - loss function 
-# optimizer (hur modellen lär sig)
+"""
+Train-modul.
 
-import torch 
-import torch.nn as nn 
-import torch.optim as optim 
+Innehåller funktion för att träna en modell i PyTorch.
+"""
 
-# Funktion som tränar modellen
-# train_loader = data som kommer i batchar
-# epochs = hur många gånger modellen ska gå igenom hela datan
+import torch.nn as nn
+import torch.optim as optim
+
+
 def train_model(model, train_loader, device, epochs=1, lr=0.001):
-    
-    # Sätt modellen i train-läge
+    """
+    Tränar en modell på angiven träningsdata.
+
+    Parametrar:
+        model (nn.Module): Modellen som ska tränas.
+        train_loader (DataLoader): DataLoader för träningsdata.
+        device (torch.device): CPU eller GPU.
+        epochs (int): Antal träningsomgångar.
+        lr (float): Learning rate för optimeraren.
+
+    Returnerar:
+        model (nn.Module): Den tränade modellen.
+    """
+
     model.train()
-    
-    # Definierar loss-funktion
-    # CrossEntropyLoss används ofta för klassificering
-    # Den mäter hur fel modellens förutsägelser är
+
+    # Definiera loss-funktion och optimerare
     criterion = nn.CrossEntropyLoss()
-    
-    # Skapar en optimizer (Adam)
-    # Den uppdaterar modellens vikter för att minska felet
     optimizer = optim.Adam(model.parameters(), lr=lr)
-    
-    # Loopar över antal epochs (hela datasetet flera gånger)
+
     for epoch in range(epochs):
         epoch_loss = 0
-        
+
         for images, labels in train_loader:
             images = images.to(device)
             labels = labels.to(device)
-            
+
             # Forward pass
             outputs = model(images)
             loss = criterion(outputs, labels)
-            
+
             # Backpropagation
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
-            
-            # Lägg till batchens loss
+
             epoch_loss += loss.item()
-        
+
         # Räkna genomsnittlig loss för epoken
         avg_loss = epoch_loss / len(train_loader)
-        
-        print(f"Epoch {epoch+1}/{epochs} - Loss: {avg_loss:.4f}")
-        
-    return model 
+
+        print(f"Epoch {epoch + 1}/{epochs} - Loss: {avg_loss:.4f}")
+
+    return model
