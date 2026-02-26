@@ -6,6 +6,7 @@ utvärderingspipen med valda hyperparametrar.
 """
 
 import torch
+import os
 from src.dataset import get_dataloaders
 from src.model import SimpleClassifier
 from src.train import train_model
@@ -34,8 +35,11 @@ def main():
 
     # Utvärdera modellen på testdata
     accuracy = evaluate_model(model, test_loader, device)
-
     print(f"Test Accuracy: {accuracy:.4f}")
+    
+    os.makedirs("artifacts", exist_ok=True)
+    torch.save(model.state_dict(), "artifacts/weights.pth")
+    print("Model weights saved.")
 
 
 if __name__ == "__main__":
